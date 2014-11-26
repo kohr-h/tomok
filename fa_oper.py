@@ -34,13 +34,40 @@ class Operator(object):
     TODO: write some more
     """
 
-    def __init__(self, geom_in, geom_out, **kwargs):
+    def __init__(self, coord_sys_in, coord_sys_out, **kwargs):
 
-        self._geom_in = geom_in
-        self._geom_out = geom_out
+        self._coord_sys_in = coord_sys_in
+        self._coord_sys_out = coord_sys_out
+        self._operator_steps = [self]
 
-    def __call__(self, fun_in, fun_out=None):
+    @property
+    def coord_sys_in(self):
+        return self._coord_sys_in
+
+    @property
+    def coord_sys_out(self):
+        return self._coord_sys_out
+
+    @property
+    def operator_steps(self):
+        return self._operator_steps
+
+    def __call__(self, function_in):
+        interm_func = function_in
+        for op in reversed(self.operator_steps):
+            if op == self:
+                interm_func = op._lastexec(interm_func)
+                return interm_func
+            else:
+                interm_func = op(interm_func)
+
+    def _lastexec(func):
         raise NotImplementedError
+
+    def __mul__(self, other):
+        if not isinstance(other, Operator):
+            raise TypeError("`other` must be of operator.Operator type")
+        self.operator_steps.append(other)
 
 
 class LinearOperator(Operator):
