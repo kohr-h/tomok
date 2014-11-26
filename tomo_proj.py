@@ -33,53 +33,55 @@ from functools import partial
 import gfunc as gf
 import fourier as ft
 from fourier import FourierProjector, FreqGeomGraphWarp
-from operator import Operator, LinearOperator
+from func_operator import Operator, LinearOperator
 from utility import euler_matrix, errfmt
 
 
-class Projector(object):
+class Projector(Operator):
     """Base class for tomographic projections.
     TODO: write some more.
     """
 
-    def __init__(self, operator, geometry):
+    def __init__(self, projection, geometry):
 
-        self._operator = operator
+        proj_map = partial(projection, geometry)
+        super().__init__(proj_map)
+
+        self._projection = projection
         self._geometry = geometry
 
     @property
-    def operator(self):
-        return self._operator
+    def projection(self):
+        return self._projection
 
     @property
     def geometry(self):
         return self._geometry
 
-    def __call__(self, function):
-        return NotImplementedError  # subclass must override
 
-    def __mul__(self, other):
-        self._operator = (other, self._)
-
-class ForwardProjector(Projector):
-    """Forward projection for the current geometry configuration.
-    TODO: more
-    """
-
-    def __call__(self, function):
-        return self.operator(function, self.geometry.sample.cur_coord_sys,
-                                  self.geometry.detector.cur_coord_sys)
-
-class BackProjector(Projector):
-    """Backprojectoin for the current geometry configuration.
+class BackProjector(Operator):
+    """Base class for tomographic backprojections.
     TODO: write some more.
     """
 
-    def __call__(self, function):
-        return self.operator(function, self.geometry.detector.cur_coord_sys,
-                             self.geometry.sample.cur_coord_sys)
+    def __init__(self, backprojection, geometry):
+
+        backproj_map = partial(backprojection, geometry)
+        super().__init__(backproj_map)
+
+        self._backprojection = backprojection
+        self._geometry = geometry
+
+    @property
+    def backprojection(self):
+        return self._backprojection
+
+    @property
+    def geometry(self):
+        return self._geometry
 
 
+# FIXME: adapt this projector, too
 class BornProjection(LinearOperator):
 
     def __init__(self, proj_grid, dist, wavenum, rotation=None, **kwargs):
