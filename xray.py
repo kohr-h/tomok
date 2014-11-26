@@ -41,6 +41,33 @@ from utility import InputValidationError
 
 def xray_ct_parallel_geom_3d(spl_grid, det_grid, axis, angles=None,
                              rotating_sample=True, **kwargs):
+    """
+    Create a 3D parallel beam geometry for X-ray CT with a flat detector.
+
+    Parameters
+    ----------
+    spl_grid: ugrid.Ugrid
+        3D grid for the sample domain
+    det_grid: ugrid.Ugrid
+        2D grid for the detector domain
+    axis: int or array-like
+        rotation axis; if integer, interpreted as corresponding standard
+        unit vecor
+    angles: array-like, optional
+        specifies the rotation angles
+    rotating_sample: boolean, optional
+        if True, the sample rotates, otherwise the source-detector system
+
+    Keyword arguments
+    -----------------
+    init_rotation: matrix-like or float
+        initial rotation of the sample; if float, ???
+
+    Returns
+    -------
+    out: tomo_geom.Geometry
+        the new parallel beam geometry
+    """
 
     spl_grid = ug.ugrid(spl_grid)
     det_grid = ug.ugrid(det_grid)
