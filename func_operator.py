@@ -28,33 +28,21 @@ from future import standard_library
 standard_library.install_aliases()
 from builtins import object
 
-from copy import deepcopy
-
 
 class Operator(object):
     """Basic class for a functional analytic operator.
     TODO: write some more
     """
-    # TODO: define next() instead of making a list?
-    def __init__(self, map_, domain_in=None, domain_out=None, **kwargs):
+
+    def __init__(self, map_, **kwargs):
 
         self._map = map_
-        self._domain_in = domain_in
-        self._domain_out = domain_out
         self._left = kwargs.get('left', None)
         self._right = kwargs.get('right', None)
 
     @property
     def map_(self):
         return self._map
-
-    @property
-    def domain_in(self):
-        return self._rightmost()._domain_in
-
-    @property
-    def domain_out(self):
-        return self._domain_out
 
     @property
     def left(self):
