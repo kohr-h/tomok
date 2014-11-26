@@ -35,7 +35,7 @@ class Operator(object):
     """Basic class for a functional analytic operator.
     TODO: write some more
     """
-
+    # TODO: define next() instead of making a list?
     def __init__(self, map_, domain_in=None, domain_out=None, **kwargs):
 
         self._map = map_

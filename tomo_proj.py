@@ -30,39 +30,60 @@ standard_library.install_aliases()
 
 import numpy as np
 from functools import partial
-import gfunc
-import fourier
+import gfunc as gf
+import fourier as ft
 from fourier import FourierProjector, FreqGeomGraphWarp
 from operator import Operator, LinearOperator
 from utility import euler_matrix, errfmt
 
 
-class Projection(Operator):
+class Projector(object):
     """Base class for tomographic projections.
     TODO: write some more.
     """
-    
-    def __init__(self, vol_geom, proj_geom, rotation=None):
-        
-        super().__init__(vol_geom, proj_geom)
-        self.rotation = rotation
 
-        
-class BackProjection(Operator):
-    """Base class for tomographic projections.
+    def __init__(self, operator, geometry):
+
+        self._operator = operator
+        self._geometry = geometry
+
+    @property
+    def operator(self):
+        return self._operator
+
+    @property
+    def geometry(self):
+        return self._geometry
+
+    def __call__(self, function):
+        return NotImplementedError  # subclass must override
+
+    def __mul__(self, other):
+        self._operator = (other, self._)
+
+class ForwardProjector(Projector):
+    """Forward projection for the current geometry configuration.
+    TODO: more
+    """
+
+    def __call__(self, function):
+        return self.operator(function, self.geometry.sample.cur_coord_sys,
+                                  self.geometry.detector.cur_coord_sys)
+
+class BackProjector(Projector):
+    """Backprojectoin for the current geometry configuration.
     TODO: write some more.
     """
-    
-    def __init__(self, proj_geom, vol_geom, rotation=None):
-        
-        super().__init__(proj_geom, vol_geom)
-        self.rotation = rotation
+
+    def __call__(self, function):
+        return self.operator(function, self.geometry.detector.cur_coord_sys,
+                             self.geometry.sample.cur_coord_sys)
 
 
 class BornProjection(LinearOperator):
-    
+
     def __init__(self, proj_grid, dist, wavenum, rotation=None, **kwargs):
-        
+
         # The Born approximation graph is a half-sphere with radius k
         # centered at -k
         def halfsph(x, y, k):
@@ -85,7 +106,7 @@ class BornProjection(LinearOperator):
                 rotation = None
             else:
                 rotation = euler_matrix(phi, theta, psi)
-        
+
 
 class BornProjector(FourierProjector):
 
