@@ -28,25 +28,35 @@ from future import standard_library
 standard_library.install_aliases()
 from builtins import object
 
+from copy import deepcopy
+
 
 class Operator(object):
     """Basic class for a functional analytic operator.
     TODO: write some more
     """
 
-    def __init__(self, coord_sys_in, coord_sys_out, **kwargs):
+    def __init__(self, map_, domain_in=None, domain_out=None, **kwargs):
 
-        self._coord_sys_in = coord_sys_in
-        self._coord_sys_out = coord_sys_out
+        self._map = map_
+        self._domain_in = domain_in
+        self._domain_out = domain_out
         self._operator_steps = [self]
 
     @property
-    def coord_sys_in(self):
-        return self._coord_sys_in
+    def map_(self):
+        if self._operator_steps == [self]:
+            return self._map
+        else:
+            return self.__call__
 
     @property
-    def coord_sys_out(self):
-        return self._coord_sys_out
+    def domain_in(self):
+        return self._operator_steps[-1]._domain_in
+
+    @property
+    def domain_out(self):
+        return self._operator_steps[0]._domain_out
 
     @property
     def operator_steps(self):
@@ -56,18 +66,26 @@ class Operator(object):
         interm_func = function_in
         for op in reversed(self.operator_steps):
             if op == self:
-                interm_func = op._lastexec(interm_func)
+                interm_func = op._map(interm_func)
                 return interm_func
             else:
                 interm_func = op(interm_func)
 
-    def _lastexec(func):
-        raise NotImplementedError
-
     def __mul__(self, other):
+        if isinstance(other, Operator):  # return operator product
+            new_op = self.copy()
+            new_op.__imul__(other)
+            return new_op
+        else:  # try to evaluate
+            return self.__call__(other)
+
+    def __imul__(self, other):
         if not isinstance(other, Operator):
-            raise TypeError("`other` must be of operator.Operator type")
-        self.operator_steps.append(other)
+            raise TypeError("`other` must be of `Operator` type")
+        self.operator_steps.append(other.copy())
+
+    def copy(self):
+        return deepcopy(self)
 
 
 class LinearOperator(Operator):
