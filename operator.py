@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+operator.py -- functional analytic operators
+
 Copyright 2014 Holger Kohr
 
 This file is part of tomok.

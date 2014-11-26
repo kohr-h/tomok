@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+ctf.py -- contrast transfer function in electron tomography
+
 Copyright 2014 Holger Kohr
 
 This file is part of tomok.

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+fourier.py -- uniform and non-uniform Fourier transforms
+
 Copyright 2014 Holger Kohr
 
 This file is part of tomok.
@@ -37,7 +39,6 @@ except ImportError:
 from functools import partial
 import ugrid as ug
 import gfunc as gf
-import coord as co
 from utility import errfmt, InputValidationError, SQRT_2PI
 
 

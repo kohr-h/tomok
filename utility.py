@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+utility.py -- utility functions
+
 Copyright 2014 Holger Kohr
 
 This file is part of tomok.

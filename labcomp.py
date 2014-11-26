@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+labcomp.py -- component in a tomography lab
+
 Copyright 2014 Holger Kohr
 
 This file is part of tomok.

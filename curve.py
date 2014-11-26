@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+curve.py -- curves in n-dimensional space
+
 Copyright 2014 Holger Kohr
 
 This file is part of tomok.

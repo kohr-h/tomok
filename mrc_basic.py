@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+mrc_basic.py -- I/O for basic MRC files
+
 Copyright 2014 Holger Kohr
 
 This file is part of tomok.

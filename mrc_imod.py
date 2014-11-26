@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+mrc_imod.py -- I/O for MRC files as used by IMOD
+
 Copyright 2014 Holger Kohr
 
 This file is part of tomok.

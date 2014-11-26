@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+ugrid.py -- n-dimensional uniform grid
+
 Copyright 2014 Holger Kohr
 
 This file is part of tomok.

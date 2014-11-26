@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-
 """
+coord.py -- coordinates for n-dimensional rectangular grids
+
 Copyright 2014 Holger Kohr
 
 This file is part of tomok.

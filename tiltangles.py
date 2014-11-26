@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+tiltangles.py -- I/O for tiltangles files
+
 Copyright 2014 Holger Kohr
 
 This file is part of tomok.

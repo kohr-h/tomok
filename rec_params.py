@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+rec_params.py -- I/O for reconstruction parameter config files
+
 Copyright 2014 Holger Kohr
 
 This file is part of tomok.

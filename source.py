@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+source.py -- (radiation) source in tomography
+
 Copyright 2014 Holger Kohr
 
 This file is part of tomok.

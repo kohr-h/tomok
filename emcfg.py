@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+emcfg.py -- I/O for electron microscope configuration
+
 Copyright 2014 Holger Kohr
 
 This file is part of tomok.

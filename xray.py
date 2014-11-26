@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+xray.py -- helper functions for X-ray tomography
+
 Copyright 2014 Holger Kohr
 
 This file is part of tomok.

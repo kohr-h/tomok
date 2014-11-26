@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
+gfunc.py -- n-dimensional functions on a grid
+
 Copyright 2014 Holger Kohr
 
 This file is part of tomok.
