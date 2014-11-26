@@ -41,35 +41,47 @@ class Operator(object):
         self._map = map_
         self._domain_in = domain_in
         self._domain_out = domain_out
-        self._operator_steps = [self]
+        self._left = kwargs.get('left', None)
+        self._right = kwargs.get('right', None)
 
     @property
     def map_(self):
-        if self._operator_steps == [self]:
-            return self._map
-        else:
-            return self.__call__
+        return self._map
 
     @property
     def domain_in(self):
-        return self._operator_steps[-1]._domain_in
+        return self._rightmost()._domain_in
 
     @property
     def domain_out(self):
-        return self._operator_steps[0]._domain_out
+        return self._domain_out
 
     @property
-    def operator_steps(self):
-        return self._operator_steps
+    def left(self):
+        return self._left
 
-    def __call__(self, function_in):
-        interm_func = function_in
-        for op in reversed(self.operator_steps):
-            if op == self:
-                interm_func = op._map(interm_func)
-                return interm_func
-            else:
-                interm_func = op(interm_func)
+    @property
+    def right(self):
+        return self._right
+
+    @right.setter
+    def right(self, other):
+        self._right = other
+        other._left = self
+
+    def _rightmost(self):
+        cur_op = self
+        while cur_op.right is not None:
+            cur_op = cur_op.right
+        return cur_op
+
+    def __call__(self, function):
+        cur_op = self._rightmost()
+        cur_func = cur_op.map_(function)
+        while cur_op.left is not None:
+            cur_op = cur_op.left
+            cur_func = cur_op.map_(cur_func)
+        return cur_func
 
     def __mul__(self, other):
         if isinstance(other, Operator):  # return operator product
@@ -82,10 +94,18 @@ class Operator(object):
     def __imul__(self, other):
         if not isinstance(other, Operator):
             raise TypeError("`other` must be of `Operator` type")
-        self.operator_steps.append(other.copy())
+        self._rightmost().right = other
 
     def copy(self):
-        return deepcopy(self)
+        new_op = Operator(self.map_, self.domain_in, self.domain_out)
+        cur_op = self
+        cur_cpy = new_op
+        while cur_op.right is not None:
+            cur_op = cur_op.right
+            cur_cpy.right = Operator(cur_op.map_, cur_op.domain_in,
+                                     cur_op.domain_out, left=cur_cpy)
+            cur_cpy = cur_cpy.right
+        return new_op
 
 
 class LinearOperator(Operator):
