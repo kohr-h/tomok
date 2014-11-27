@@ -97,14 +97,14 @@ class Curve(object):
             if self._normal is None:
                 raise ValueError("`normal` must be defined to use tripod.")
 
-            def axes_mapping_2_(tang, nor, param):
-                return (-nor(param), tang(param))
+            def axes_mapping_2_(tang, nor, time):
+                return (-nor(time), tang(time))
 
-            def axes_mapping_3_(tang, nor, binor, param):
-                tangent = tang(param)
-                normal = nor(param)
+            def axes_mapping_3_(tang, nor, binor, time):
+                tangent = tang(time)
+                normal = nor(time)
                 if binor is not None:
-                    binormal = binor(param)
+                    binormal = binor(time)
                 else:
                     binormal = np.cross(tangent, normal)
                 return (-normal, tangent, binormal)
@@ -118,7 +118,7 @@ class Curve(object):
 
         else:
             self._axes_mapping = axes_mapping
-        
+
         if axes_mapping is not None:
             self._coord_sys = axes_mapping
         else:
@@ -225,26 +225,26 @@ class Curve(object):
         else:
             return None
 
-    def coord_sys_is_ons_rhs(self, params=None, show_diff=False):
+    def coord_sys_is_ons_rhs(self, times=None, show_diff=False):
 
-        if params is not None:
-            if np.asarray(params).ndim >= 1:
-                params = np.asarray(params).flatten()
+        if times is not None:
+            if np.asarray(times).ndim >= 1:
+                times = np.asarray(times).flatten()
             else:
-                params = (params,)
+                times = (times,)
         else:
-            params = self.iter_stops()
+            times = self.iter_stops()
 
-        for param in params:
-            coord_sys = self.coord_sys(param)
+        for time in times:
+            coord_sys = self.coord_sys(time)
             coord_matrix = np.matrix(coord_sys)
             if not is_rotation_matrix(coord_matrix):
-                print('at parameter: ', param)
+                print('at timeeter: ', time)
                 return False
         return True
 
-    def __call__(self, param):
-        return self.curve_fun(param)
+    def __call__(self, time):
+        return self.curve_fun(time)
 
 
 def curve(obj, **kwargs):
