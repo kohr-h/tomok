@@ -49,7 +49,7 @@ class LabComponent(object):
                 raise TypeError(errfmt("""\
                 `location` must either be array-like or a curve."""))
 
-        self._cur_pos = self._location.startpos
+        self._cur_location = self._location.startpos
         self._cur_coord_sys = self._location.start_coord_sys
 
     @property
@@ -65,16 +65,16 @@ class LabComponent(object):
         return self._location
 
     @property
+    def start_location(self):
+        return self.curve.startpos
+
+    @property
     def coord_sys(self):
         return self.curve.coord_sys
 
     @property
-    def startpos(self):
-        return self.curve.startpos
-
-    @property
-    def cur_pos(self):
-        return self._cur_position
+    def cur_location(self):
+        return self._cur_location
 
     @property
     def start_coord_sys(self):
@@ -84,12 +84,12 @@ class LabComponent(object):
     def cur_coord_sys(self):
         return self._cur_coord_sys
 
-    def moveto(self, param_val):
-        self._cur_pos = self.curve.curve_fun(param_val)
+    def totime(self, time):
+        self._cur_location = self.curve.curve_fun(time)
         if self.axes_map is not None:
-            self._cur_coord_sys = self.curve.axes_map(param_val)
+            self._cur_coord_sys = self.curve.axes_map(time)
 
     def reset(self):
-        self._cur_pos = self.startpos
+        self._cur_location = self.startpos
         if self.axes_map is not None:
             self._cur_coord_sys = self.start_coord_sys

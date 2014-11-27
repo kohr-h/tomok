@@ -94,12 +94,12 @@ class ParallelRaySource(Source):
     def direction_map(self):
         return self._direction_map
 
-    def direction(self, param, system='local'):
+    def direction(self, time, system='local'):
         if system.lower() == 'lab':
-            return util.to_lab_sys(self.direction_map(param),
-                                   self.coord_sys(param))
+            return util.to_lab_sys(self.direction_map(time),
+                                   self.coord_sys(time))
         else:
-            return self.direction_map(param)
+            return self.direction_map(time)
 
 
 class PlaneWaveSource(Source):
@@ -119,12 +119,12 @@ class PlaneWaveSource(Source):
     def direction_map(self):
         return self._direction_map
 
-    def direction(self, param, system='local'):
+    def direction(self, time, system='local'):
         if system.lower() == 'lab':
-            return util.to_lab_sys(self.direction_map(param),
-                                   self.coord_sys(param))
+            return util.to_lab_sys(self.direction_map(time),
+                                   self.coord_sys(time))
         else:
-            return self.direction_map(param)
+            return self.direction_map(time)
 
 
 class CoherentElectronSource(Source):
@@ -154,8 +154,8 @@ class CoherentElectronSource(Source):
     def wavenum(self):
         return self.em_config.wavenum
 
-    def direction(self, param, system='local'):
+    def direction(self, time, system='local'):
         if system.lower() == 'lab':
-            return util.to_lab_sys((0, 0, 1), self.coord_sys(param))
+            return util.to_lab_sys((0, 0, 1), self.coord_sys(time))
         else:
             return np.array((0, 0, 1))  # TODO: more generic?
