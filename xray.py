@@ -92,7 +92,7 @@ def xray_ct_parallel_geom_3d(spl_grid, det_grid, axis, angles=None,
         detector = det.FlatDetectorArray(det_grid, det_loc)
     else:
         src_circle = crv.Circle3D(1., axis, angles=angles, axes_map='tripod')
-        source = src.ParallelRaySource(curve=src_circle)
+        source = src.ParallelRaySource((1, 0, 0), src_circle)
 
         sample = spl.FixedSample(spl_grid)
 
@@ -100,3 +100,10 @@ def xray_ct_parallel_geom_3d(spl_grid, det_grid, axis, angles=None,
                                   axes_map='tripod')
         detector = det.FlatDetectorArray(det_grid, det_circle)
     return tgeo.Geometry(source, sample, detector)
+
+
+def xray_projection_map(grid_func, geometry, backend='astra'):
+    
+    if backend == 'astra':
+
+def _xray_proj_map_parbeam_astra(gf, geom):        
