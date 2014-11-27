@@ -53,11 +53,12 @@ class Geometry(object):
 
     def vec_source_to_sample(self, time=None, normalize=False):
         if time is None:
-            vector = self.sample.cur_position - self.source.cur_position
+            vector = self.sample.cur_location - self.source.cur_location
         else:
             vector = self.sample.location(time) - self.source.location(time)
         if normalize:
-            return vector / norm(vector, 2)
+            vector = vector / norm(vector, 2)
+        return vector
 
     def dist_source_sample(self, time=None):
         vector = self.vec_source_to_sample(time)
@@ -65,11 +66,12 @@ class Geometry(object):
 
     def vec_sample_to_detector(self, time=None, normalize=False):
         if time is None:
-            vector = self.detector.cur_position - self.sample.cur_position
+            vector = self.detector.cur_location - self.sample.cur_location
         else:
             vector = self.detector.location(time) - self.sample.location(time)
         if normalize:
-            return vector / norm(vector, 2)
+            vector = vector / norm(vector, 2)
+        return vector
 
     def dist_sample_detector(self, time=None):
         vector = self.vec_sample_to_detector(time)
@@ -77,11 +79,12 @@ class Geometry(object):
 
     def vec_source_to_detector(self, time=None, normalize=False):
         if time is None:
-            vector = self.detector.cur_position - self.source.cur_position
+            vector = self.detector.cur_location - self.source.cur_location
         else:
             vector = self.detector.location(time) - self.source.location(time)
         if normalize:
-            return vector / norm(vector, 2)
+            vector = vector / norm(vector, 2)
+        return vector
 
     def dist_source_detector(self, time=None):
         vector = self.vec_source_to_detector(time)
