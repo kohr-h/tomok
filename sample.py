@@ -35,17 +35,18 @@ import numpy as np
 from scipy.linalg import norm
 
 from labcomp import LabComponent
+import curve as crv
 from utility import errfmt, InputValidationError, is_rotation_matrix
 import utility as util
 
 
 class Sample(LabComponent):
 
-    def __init__(self, support, location=None, axes_map=None, **kwargs):
+    def __init__(self, support, location=None, **kwargs):
 
         if location is None:
             location = support.ref_point
-        super().__init__(location, axes_map, **kwargs)
+        super().__init__(location, **kwargs)
 
     @property
     def support(self):
@@ -137,7 +138,8 @@ class RotatingSample(Sample):
         if angles is not None:
             angles = np.array(angles)
         kwargs.update({'stops': angles})
-        super().__init__(support, location=None, axes_map=axes_map, **kwargs)
+        location = crv.FixedPoint(support.ref_point, axes_map)
+        super().__init__(support, location, **kwargs)
         self._rot_axis = rot_axis
         self._init_rotation = start_rot
 

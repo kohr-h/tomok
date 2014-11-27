@@ -36,15 +36,13 @@ from utility import errfmt
 
 class LabComponent(object):
 
-    def __init__(self, location, axes_map=None, **kwargs):
-
+    def __init__(self, location, **kwargs):
         if isinstance(location, crv.Curve):
-            self._location = crv.curve(location, axes_map=axes_map,
-                                       **kwargs)
+            self._location = crv.curve(location, **kwargs)
         else:
             try:
                 location = np.array(location)
-                self._location = crv.FixedPoint(location, axes_map)
+                self._location = crv.FixedPoint(location)
             except TypeError:
                 raise TypeError(errfmt("""\
                 `location` must either be array-like or a curve."""))
@@ -57,20 +55,12 @@ class LabComponent(object):
         return self._location
 
     @property
-    def axes_map(self):
-        return self.curve.axes_map
-
-    @property
-    def curve(self):
-        return self._location
-
-    @property
     def start_location(self):
-        return self.curve.startpos
+        return self.location.startpos
 
     @property
     def coord_sys(self):
-        return self.curve.coord_sys
+        return self.location.coord_sys
 
     @property
     def cur_location(self):
@@ -78,18 +68,16 @@ class LabComponent(object):
 
     @property
     def start_coord_sys(self):
-        return self.curve.start_coord_sys
+        return self.location.start_coord_sys
 
     @property
     def cur_coord_sys(self):
         return self._cur_coord_sys
 
     def totime(self, time):
-        self._cur_location = self.curve.curve_fun(time)
-        if self.axes_map is not None:
-            self._cur_coord_sys = self.curve.axes_map(time)
+        self._cur_location = self.location.curve_fun(time)
+        self._cur_coord_sys = self.location.coord_sys(time)
 
     def reset(self):
         self._cur_location = self.startpos
-        if self.axes_map is not None:
-            self._cur_coord_sys = self.start_coord_sys
+        self._cur_coord_sys = self.location.start_coord_sys
