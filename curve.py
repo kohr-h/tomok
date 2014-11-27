@@ -35,6 +35,7 @@ from math import sin, cos
 import numpy as np
 from scipy.linalg import norm
 from functools import partial
+from copy import deepcopy
 
 import utility as util
 from utility import errfmt, is_rotation_matrix
@@ -87,8 +88,8 @@ class Curve(object):
         else:
             self._binormal = kwargs.get('binormal', None)
 
-        axes_mapping = kwargs.get('axes_mapping', None)
-        if axes_mapping == 'tripod':
+        axes_map = kwargs.get('axes_map', None)
+        if axes_map == 'tripod':
             if self._dim not in (2, 3):
                 raise ValueError(errfmt("""\
                 tripod can only be used in 2- or 3-dimensional curves."""))
@@ -97,10 +98,10 @@ class Curve(object):
             if self._normal is None:
                 raise ValueError("`normal` must be defined to use tripod.")
 
-            def axes_mapping_2_(tang, nor, time):
+            def axes_map_2_(tang, nor, time):
                 return (-nor(time), tang(time))
 
-            def axes_mapping_3_(tang, nor, binor, time):
+            def axes_map_3_(tang, nor, binor, time):
                 tangent = tang(time)
                 normal = nor(time)
                 if binor is not None:
@@ -110,19 +111,19 @@ class Curve(object):
                 return (-normal, tangent, binormal)
 
             if self._dim == 2:
-                self._axes_mapping = partial(axes_mapping_2_, self._tangent,
-                                             self._normal)
+                self._axes_map = partial(axes_map_2_, self._tangent,
+                                         self._normal)
             else:
-                self._axes_mapping = partial(axes_mapping_3_, self._tangent,
-                                             self._normal, self._binormal)
+                self._axes_map = partial(axes_map_3_, self._tangent,
+                                         self._normal, self._binormal)
 
         else:
-            self._axes_mapping = axes_mapping
+            self._axes_map = axes_map
 
-        if axes_mapping is not None:
-            self._coord_sys = axes_mapping
+        if axes_map is not None:
+            self._coord_sys = self._axes_map
         else:
-            self._coord_sys = tuple(col for col in np.eye(self._dim))
+            self._coord_sys = lambda x: tuple(col for col in np.eye(self._dim))
 
     @property
     def curve_fun(self):
@@ -211,8 +212,8 @@ class Curve(object):
             return None
 
     @property
-    def axes_mapping(self):
-        return self._axes_mapping
+    def axes_map(self):
+        return self._axes_map
 
     @property
     def coord_sys(self):
@@ -222,6 +223,8 @@ class Curve(object):
     def start_coord_sys(self):
         if self._start is not None:
             return self.coord_sys(self.start)
+        elif self.axes_map is None:
+            return self.coord_sys(0)  # constantly standard system
         else:
             return None
 
@@ -238,28 +241,22 @@ class Curve(object):
         for time in times:
             coord_sys = self.coord_sys(time)
             coord_matrix = np.matrix(coord_sys)
-            if not is_rotation_matrix(coord_matrix):
-                print('at timeeter: ', time)
+            if not is_rotation_matrix(coord_matrix, show_diff=show_diff):
+                print('at time: ', time)
                 return False
         return True
 
     def __call__(self, time):
         return self.curve_fun(time)
 
+    def copy(self):
+        return deepcopy(self)
+
 
 def curve(obj, **kwargs):
 
     if isinstance(obj, Curve):
-        stops = kwargs.get('stops', obj.stops)
-        obj_start = None if obj.start == -np.inf else obj.start
-        start = kwargs.get('start', obj_start)
-        obj_end = None if obj.end == np.inf else obj.end
-        end = kwargs.get('end', obj_end)
-        step = kwargs.get('step', obj.step)
-
-        kwargs.update({'stops': stops, 'start': start, 'end': end,
-                       'step': step})
-        return Curve(obj.curve_fun, **kwargs)
+        return obj.copy()
     else:
         raise TypeError(errfmt("""\
         {!r} cannot be converted to {!r}.""".format(type(obj), Curve)))
@@ -267,11 +264,11 @@ def curve(obj, **kwargs):
 
 class FixedPoint(Curve):
 
-    def __init__(self, location, axes_mapping=None):
+    def __init__(self, location, axes_map=None):
 
         location = np.array(location)
         curve_fun = lambda x: location
-        super().__init__(curve_fun, axes_mapping=axes_mapping)
+        super().__init__(curve_fun, axes_map=axes_map)
 
     @property
     def location(self):
