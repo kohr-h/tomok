@@ -28,15 +28,16 @@ from builtins import super
 from future import standard_library
 standard_library.install_aliases()
 
+import numpy as np
+
 from labcomp import LabComponent
 
 
 class Detector(LabComponent):
 
-    def __init__(self, support, location, axes_map=None, **kwargs):
-
+    def __init__(self, support, location, **kwargs):
         self._support = support
-        super().__init__(location, axes_map, **kwargs)
+        super().__init__(location, **kwargs)
 
     @property
     def support(self):
@@ -45,29 +46,42 @@ class Detector(LabComponent):
 
 class FlatDetectorArray(Detector):
 
-    def __init__(self, grid, location, axes_map=None, **kwargs):
-        super().__init__(grid, location, axes_map, **kwargs)
+    def __init__(self, grid, location, **kwargs):
+        super().__init__(grid, location, **kwargs)
 
     @property
     def grid(self):
         return self.support
+
+    @property
+    def pixel_size(self):
+        return self.grid.spacing
+
+    @property
+    def pixel_area(self):
+        return np.prod(self.grid.spacing)
 
 
 class SphericalDetectorArray(Detector):
 
-    def __init__(self, grid, location, axes_map=None, **kwargs):
-        super().__init__(grid, location, axes_map, **kwargs)
+    def __init__(self, grid, location, **kwargs):
+        super().__init__(grid, location, **kwargs)
 
     @property
     def grid(self):
         return self.support
+
+    @property
+    def pixel_size(self):
+        return self.grid.spacing
 
 
 class PointDetectors(Detector):
 
     # TODO: implement point colletion type support
-    def __init__(self, points, axes_map=None, **kwargs):
-        super().__init__(points, None, axes_map, **kwargs)
+    def __init__(self, points, **kwargs):
+        return NotImplementedError
+        super().__init__(points, None, **kwargs)
 
     @property
     def points(self):
