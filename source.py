@@ -39,17 +39,13 @@ import utility as util
 class Source(LabComponent):
 
     def __init__(self, location, **kwargs):
-
-        axes_map = kwargs.get('axes_map', None)
-        super().__init__(location, axes_map, **kwargs)
+        super().__init__(location, **kwargs)
 
         self._mask = kwargs.get('mask', None)
 
         wavenum = kwargs.get('wavenum', None)
-
         if wavenum is not None and wavenum <= 0.:
             raise ValueError("wavenum must be positive.")
-
         self._wavenum = wavenum
 
     @property
@@ -94,7 +90,7 @@ class ParallelRaySource(Source):
     def direction_map(self):
         return self._direction_map
 
-    def direction(self, time, system='local'):
+    def direction(self, time, system='lab'):
         if system.lower() == 'lab':
             return util.to_lab_sys(self.direction_map(time),
                                    self.coord_sys(time))
