@@ -28,6 +28,8 @@ from future import standard_library
 standard_library.install_aliases()
 from builtins import object
 
+from scipy.linalg import norm
+
 
 class Geometry(object):
 
@@ -48,5 +50,46 @@ class Geometry(object):
     @property
     def detector(self):
         return self._detector
+
+    def vec_source_to_sample(self, time=None, normalize=False):
+        if time is None:
+            vector = self.sample.cur_position - self.source.cur_position
+        else:
+            vector = self.sample.location(time) - self.source.location(time)
+        if normalize:
+            return vector / norm(vector, 2)
+
+    def dist_source_sample(self, time=None):
+        vector = self.vec_source_to_sample(time)
+        return norm(vector, 2)
+
+    def vec_sample_to_detector(self, time=None, normalize=False):
+        if time is None:
+            vector = self.detector.cur_position - self.sample.cur_position
+        else:
+            vector = self.detector.location(time) - self.sample.location(time)
+        if normalize:
+            return vector / norm(vector, 2)
+
+    def dist_sample_detector(self, time=None):
+        vector = self.vec_sample_to_detector(time)
+        return norm(vector, 2)
+
+    def vec_source_to_detector(self, time=None, normalize=False):
+        if time is None:
+            vector = self.detector.cur_position - self.source.cur_position
+        else:
+            vector = self.detector.location(time) - self.source.location(time)
+        if normalize:
+            return vector / norm(vector, 2)
+
+    def dist_source_detector(self, time=None):
+        vector = self.vec_source_to_detector(time)
+        return norm(vector, 2)
+
+    def totime(self, time):
+        self.source.totime(time)
+        self.sample.totime(time)
+        self.detector.totime(time)
 
     # TODO: add more features
