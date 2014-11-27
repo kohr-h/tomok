@@ -90,8 +90,7 @@ class Operator(object):
         cur_cpy = new_op
         while cur_op.right is not None:
             cur_op = cur_op.right
-            cur_cpy.right = Operator(cur_op.map_, cur_op.domain_in,
-                                     cur_op.domain_out, left=cur_cpy)
+            cur_cpy.right = Operator(cur_op.map_, left=cur_cpy)
             cur_cpy = cur_cpy.right
         return new_op
 
