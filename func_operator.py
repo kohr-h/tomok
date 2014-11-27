@@ -85,7 +85,7 @@ class Operator(object):
         self._rightmost().right = other
 
     def copy(self):
-        new_op = Operator(self.map_, self.domain_in, self.domain_out)
+        new_op = Operator(self.map_)
         cur_op = self
         cur_cpy = new_op
         while cur_op.right is not None:
